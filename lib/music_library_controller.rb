@@ -43,21 +43,18 @@ class MusicLibraryController
   end
 
   def list_artists
-    artists_from_song_class = Song.all.collect {|song| song.artist.name}
-    songs_name = Song.all.collect {|song| song.name}
-    artists_from_artist_class = Artist.all.select {|artists| songs_name.include?(artists.name) == false}.collect {|artist| artist.name}
-    all_artists = artists_from_song_class + artists_from_artist_class
-    all_artists.uniq.sort.each_with_index {|name, idx| puts "#{idx + 1}. #{name}"}
+    Artist.all.sort_by {|artist| artist.name}.each_with_index {|artist, idx| puts "#{idx + 1}. #{artist.name}"}
   end
 
   def list_genres
-    Song.all.collect {|song| song.genre.name}.uniq.sort.each_with_index {|genre, idx| puts "#{idx + 1}. #{genre}"}
+    Genre.all.sort_by {|genre| genre.name}.each_with_index {|genre, idx| puts "#{idx + 1}. #{genre.name}"}
   end
 
   def list_songs_by_artist
     puts "Please enter the name of an artist:"
     input = gets.chomp.downcase
     artists = Song.all.collect {|song| song.artist.name.downcase}
+
     if artists.include?(input)
       Song.all.select {|song| song.artist.name.downcase == input}.sort_by {|song| song.name}.each_with_index {|song, idx| puts "#{idx + 1}. #{song.name} - #{song.genre.name}"}
     end
@@ -67,6 +64,7 @@ class MusicLibraryController
     puts "Please enter the name of a genre:"
     input = gets.chomp.downcase
     genres = Song.all.collect {|song| song.genre.name.downcase}
+
     if genres.include?(input)
       Song.all.select {|song| song.genre.name.downcase == input}.sort_by {|song| song.genre.name}.each_with_index {|song, idx| puts "#{idx + 1}. #{song.artist.name} - #{song.name}"}
     end
@@ -76,6 +74,7 @@ class MusicLibraryController
     puts "Which song number would you like to play?"
     songs_arr = Song.all.sort_by {|song| song.name}
     input = gets.chomp.to_i
+
     if input > 0 && input <= songs_arr.size
       song = songs_arr[input - 1]
       puts "Playing #{song.name} by #{song.artist.name}"
